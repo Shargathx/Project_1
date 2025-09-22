@@ -12,7 +12,7 @@ const generateAllVanasonad = function() {
             return [];
         }
     } catch (err) {
-        console.log("Error reading file:", err);
+        console.log("Error: ", err);
         return [];
     }
 }
@@ -20,7 +20,7 @@ const generateAllVanasonad = function() {
 const getSingleWisdomSaying = function() {
     let wisdomList = generateAllVanasonad();
     if (wisdomList.length === 0) {
-        return "<p>Vanasõnu pole!</p>"
+        return "<p>Vanasõnu pole!</p>";
     }
     let randomSaying = wisdomList[Math.floor(Math.random() * wisdomList.length)];
     return randomSaying;

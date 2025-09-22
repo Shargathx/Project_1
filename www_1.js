@@ -1,4 +1,5 @@
 const http = require("http");
+const { getSingleWisdomSaying } = require("./src/wisdomList");
 const { generateVanasonaForHTML } = require("./src/wisdomList");
 const dateEt = require("./src/dateTimeET");
 // const wisdomList = require("./src/wisdomList");
@@ -13,6 +14,7 @@ http.createServer(function (req, res) {
   res.write(pageBody);
   res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ".</p>");
   res.write("<p>Kell on: " + dateEt.fullTime() + ".</p>");
+  res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
   res.write("<br>")
   res.write(generateVanasonaForHTML());
   res.write(pageFoot);
