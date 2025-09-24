@@ -1,20 +1,32 @@
 const fs = require("fs");
 const path = require("path");
 
-const currentUrl = function () {
-    // liidame kättesaamatu piltide kausta veebi failidega
-    let bannerPath = path.join(__dirname, "images");
-    fs.readFile(bannerPath + currentUrl.pathname, (err, data) => {
-        if (err) {
-            throw (err);
+class PageBanner {
+    constructor(filename) {
+        this.bannerPath = path.join(__dirname, "images", filename);
+        this.bannerBase64 = "";
+        this.loadBanner();
+    }
+
+    loadBanner() {
+        if (!fs.existsSync(this.bannerPath)) {
+            console.error("Banner file not found at:", this.bannerPath);
+            return;
         }
-        else {
-            res.writeHead(200, { "Content-type": "image/jpeg" });
-            res.end(data);
+
+        try {
+            const data = fs.readFileSync(this.bannerPath);
+            this.bannerBase64 = data.toString("base64");
+            console.log("Banner loaded successfully.");
+        } catch (err) {
+            console.error("Error reading banner:", err);
         }
-    });
+    }
+
+    getHTML() {
+        if (!this.bannerBase64) return "<p>Banner not available</p>";
+        return `<img src="data:image/jpeg;base64,${this.bannerBase64}" alt="Banner">`;
+    }
 }
-res.end("Viga 404, ei leia sellist lehte!");
 
-
-module.exports = { pageBanner };
+module.exports = PageBanner;

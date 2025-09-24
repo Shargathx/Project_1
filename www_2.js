@@ -1,8 +1,9 @@
 const http = require("http");
+const PageBanner = require("./src/pageBanner");
 const { getSingleWisdomSaying } = require("./src/wisdomList");
 const { generateVanasonaForHTML } = require("./src/wisdomList");
 const dateEt = require("./src/dateTimeET");
-const pageBanner = require("./src/pageBanner");
+const banner = new PageBanner("vp_banner_2025_TA.jpg");
 
 
 // laeme moodulid päringu parsimiseks
@@ -16,7 +17,7 @@ const pageLink = '\n\t<p>Vaata ka vanasõnade <a href="/vanasonad">lehte</a>!</p
 // const wisdomList = require("./src/wisdomList");
 const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
 const pageBody = '<h1>MartinS, juuniorprogeja</h1>\n<p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank">TLU</a> veebiprogemise kursusel, ei sisalda tõsist sisu</p><p>See rida on lisatud kodus ja läbi Putty ja WinSCP üles laetud. :)</p><p>Olen kokku puutunud Javascripti, Typescripti ja Javaga ning teinud mõned proovitööd ka tööpakkumistega seoses.</p><p>Hobikorras tegelen klaveriõppega, samuti olen tegelenud laskespordiga ja motokrossiga.</p><hr></hr>';
-const pageFoot = '\n</body>\n<style>h1, p, img {text-align: center;margin: 20px;font-family: Arial, sans-serif;} li{margin-bottom: 10px}</style></html>';
+const pageFoot = '\n</body>\n<style></style></html>';
 
 
 //req = require, res = response
@@ -28,18 +29,19 @@ http.createServer(function (req, res) {
   console.log("Parsituna: " + currentUrl.pathname);
 
   if (currentUrl.pathname === "/") {
-    res.writeHead(200, { "Content-type": "text/html" });
-    res.write(pageBanner);
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(banner.getHTML());
     res.write(pageHead);
     res.write(pageBody);
     res.write(pageLink);
-    res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ".</p>");
+    res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ", " + dateEt.partOfDay() + ".</p>");
     res.write("<p>Kell on: " + dateEt.fullTime() + ".</p>");
+    res.write(pageFoot);
     return res.end();
   }
   else if (currentUrl.pathname === "/vanasonad") {
-    res.writeHead(200, { "Content-type": "text/html" });
-    res.write(pageBanner);
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(banner.getHTML());
     res.write(pageHead);
     res.write(pageBody);
     res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
@@ -48,8 +50,8 @@ http.createServer(function (req, res) {
   }
 
   // res.writeHead(200, { "Content-type": "text/html" });
-  // res.write(pageFoot);
-  // // return res.end();
+  res.write(pageFoot);
+  return res.end();
 
 
 
