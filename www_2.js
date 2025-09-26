@@ -1,3 +1,4 @@
+<<<<<<< HEAD
   const http = require("http");
   const fs = require("fs");
   const { getSingleWisdomSaying } = require("./src/wisdomList");
@@ -22,11 +23,21 @@ const { PageImage, PageAudio } = require("./src/pageBanner");
   const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
   const pageBody = '<h1>MartinS, juuniorprogeja</h1>\n<p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank">TLU</a> veebiprogemise kursusel, ei sisalda tõsist sisu</p><p>See rida on lisatud kodus ja läbi Putty ja WinSCP üles laetud. :)</p><p>Olen kokku puutunud Javascripti, Typescripti ja Javaga ning teinud mõned proovitööd ka tööpakkumistega seoses.</p><p>Hobikorras tegelen klaveriõppega, samuti olen tegelenud laskespordiga ja motokrossiga.</p><hr></hr>';
   const pageFoot = '\n</body>\n<style></style></html>';
+=======
+const http = require("http");
+const PageBanner = require("./src/pageBanner");
+const { getSingleWisdomSaying } = require("./src/wisdomList");
+const { generateVanasonaForHTML } = require("./src/wisdomList");
+const dateEt = require("./src/dateTimeET");
+const pageBanner = new PageBanner("vp_banner_2025_TA.jpg");
+const klaverPicture = new PageBanner("klaver.jpg");
+>>>>>>> b002b161545b2dc7ce5b2ecd1623ea215d214ca1
 
 
   //req = require, res = response
   http.createServer(function (req, res) {
 
+<<<<<<< HEAD
     // parsin URL-i
     console.log("Päring: " + req.url);
     let currentUrl = url.parse(req.url, true);
@@ -54,6 +65,18 @@ const { PageImage, PageAudio } = require("./src/pageBanner");
       return res.end();
     }
     
+=======
+// failide haldamiseks moodul:
+const path = require("path");
+
+const pageLink = '\n\t<p>Vaata ka vanasõnade <a href="/vanasonad">lehte</a>!</p>';
+const hobiLink = '\n\t<p><a href="/hobid"> Siin on paar minu hobi</a></p>';
+
+// const wisdomList = require("./src/wisdomList");
+const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
+const pageBody = '<h1>MartinS, juuniorprogeja</h1>\n<p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank">TLU</a> veebiprogemise kursusel, ei sisalda tõsist sisu</p><p>See rida on lisatud kodus ja läbi Putty ja WinSCP üles laetud. :)</p><p>Olen kokku puutunud Javascripti, Typescripti ja Javaga ning teinud mõned proovitööd ka tööpakkumistega seoses.</p><p>Hobikorras tegelen klaveriõppega, samuti olen tegelenud laskespordiga ja motokrossiga.</p><hr></hr>';
+const pageFoot = '\n</body>\n<style></style></html>';
+>>>>>>> b002b161545b2dc7ce5b2ecd1623ea215d214ca1
 
 
 
@@ -74,6 +97,7 @@ const { PageImage, PageAudio } = require("./src/pageBanner");
     if (currentUrl.pathname === "/assets/tokio_final.mp3") {
       return practiseAudio.serve(req, res);
 
+<<<<<<< HEAD
 
 }
 
@@ -82,6 +106,60 @@ const { PageImage, PageAudio } = require("./src/pageBanner");
     // res.writeHead(200, { "Content-type": "text/html" });
     res.write(pageFoot);
     return res.end();
+=======
+  if (currentUrl.pathname === "/") {
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(pageBanner.getHTML());
+    res.write(pageHead);
+    res.write(pageBody);
+    res.write(pageLink);
+    res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ", " + dateEt.partOfDay() + ".</p>");
+    res.write("<p>Kell on: " + dateEt.fullTime() + ".</p>");
+    res.write(pageFoot);
+    return res.end();
+  }
+  else if (currentUrl.pathname === "/vanasonad") {
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(pageBanner.getHTML());
+    res.write(pageHead);
+    res.write(pageBody);
+    res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
+    res.write(generateVanasonaForHTML());
+    return res.end();
+  }
+
+  else if (currentUrl.pathname === "/hobid"){
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(pageBanner.getHTML());
+    res.write(pageHead);
+    res.write(pageBody);
+    res.write("Hetkel on peamiseks hobiks klaverimäng, natukene üle aasta õppinud. Kodus on selline klaver: " + klaverPicture.getHTML());
+    res.write(`<p>Siin on üks klaveripala:</p><audio controls><source src="/assets/klaver.mp3" type="audio/mpeg">Viga esitamisel või laadimisel.</audio>`);
+    res.write(hobiLink);
+    return res.end();
+  }
+
+  else if (currentUrl.pathname.startsWith("/assets/")) {
+  const filePath = path.join(__dirname, "src", currentUrl.pathname);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      return res.end("File not found");
+    }
+
+    let contentType = "application/octet-stream";
+    if (filePath.endsWith(".mp3")) contentType = "audio/mpeg";
+
+    res.writeHead(200, { "Content-Type": contentType });
+    res.end(data);
+  });
+}
+
+
+  // res.writeHead(200, { "Content-type": "text/html" });
+  res.write(pageFoot);
+  return res.end();
+>>>>>>> b002b161545b2dc7ce5b2ecd1623ea215d214ca1
 
 
 
