@@ -23,10 +23,10 @@ class PageImage {
         }
     }
 
-    getHTML(width = "300px", height = "auto") {
-        if (!this.bannerBase64) return "<p>Banner not available</p>";
-        return `<img src="data:image/jpeg;base64,${this.bannerBase64}" alt="Banner" style="width:${width}; height:${height};">`;
-    }
+        getHTML(width = "auto", height = "auto") {
+            if (!this.bannerBase64) return "<p>Banner not available</p>";
+            return `<img src="data:image/jpeg;base64,${this.bannerBase64}" alt="Banner" style="width:${width}; height:${height};">`;
+        }
 }
 
 class PageAudio {
