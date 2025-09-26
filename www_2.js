@@ -1,57 +1,87 @@
-const http = require("http");
-const PageBanner = require("./src/pageBanner");
-const { getSingleWisdomSaying } = require("./src/wisdomList");
-const { generateVanasonaForHTML } = require("./src/wisdomList");
-const dateEt = require("./src/dateTimeET");
-const banner = new PageBanner("vp_banner_2025_TA.jpg");
+  const http = require("http");
+  const fs = require("fs");
+  const { getSingleWisdomSaying } = require("./src/wisdomList");
+  const { generateVanasonaForHTML } = require("./src/wisdomList");
+  const dateEt = require("./src/dateTimeET");
+const { PageImage, PageAudio } = require("./src/pageBanner");
+  const pageBanner = new PageImage("vp_banner_2025_TA.jpg"); 
+  const klaverImage = new PageImage("klaver.jpg"); 
+  const practiseAudio = new PageAudio("tokio_final.mp3"); 
+
+  // laeme moodulid päringu parsimiseks
+  const url = require("url");
+
+  // failide haldamiseks moodul:
+  const path = require("path");
+
+  const pageLink = '\n\t<p>Vaata ka vanasõnade <a href="/vanasonad">lehte</a>!</p>';
+  const hobiLink = '\n\t<p><a href="/hobid"> Siin on minu klaverihobi</a></p>';
+  const homeLink = '\n\t<p><a href="/"> Tagasi kodulehele </a></p>';
+
+  // const wisdomList = require("./src/wisdomList");
+  const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
+  const pageBody = '<h1>MartinS, juuniorprogeja</h1>\n<p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank">TLU</a> veebiprogemise kursusel, ei sisalda tõsist sisu</p><p>See rida on lisatud kodus ja läbi Putty ja WinSCP üles laetud. :)</p><p>Olen kokku puutunud Javascripti, Typescripti ja Javaga ning teinud mõned proovitööd ka tööpakkumistega seoses.</p><p>Hobikorras tegelen klaveriõppega, samuti olen tegelenud laskespordiga ja motokrossiga.</p><hr></hr>';
+  const pageFoot = '\n</body>\n<style></style></html>';
 
 
-// laeme moodulid päringu parsimiseks
-const url = require("url");
+  //req = require, res = response
+  http.createServer(function (req, res) {
 
-// faildie haldamiseks moodul:
-const path = require("path");
+    // parsin URL-i
+    console.log("Päring: " + req.url);
+    let currentUrl = url.parse(req.url, true);
+    console.log("Parsituna: " + currentUrl.pathname);
 
-const pageLink = '\n\t<p>Vaata ka vanasõnade <a href="/vanasonad">lehte</a>!</p>';
+    if (currentUrl.pathname === "/") {
+      res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+      res.write(pageBanner.getHTML());
+      res.write(pageHead);
+      res.write(pageBody);
+      res.write(pageLink);
+      res.write(hobiLink);
+      res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ", " + dateEt.partOfDay() + ".</p>");
+      res.write("<p>Kell on: " + dateEt.fullTime() + ".</p>");
+      res.write(pageFoot);
+      return res.end();
+    }
+    else if (currentUrl.pathname === "/vanasonad") {
+      res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+      res.write(pageBanner.getHTML());
+      res.write(pageHead);
+      res.write(pageBody);
+      res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
+      res.write(generateVanasonaForHTML());
+      return res.end();
+    }
+    
 
-// const wisdomList = require("./src/wisdomList");
-const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
-const pageBody = '<h1>MartinS, juuniorprogeja</h1>\n<p>See leht on loodud <a href="https://www.tlu.ee/" target="_blank">TLU</a> veebiprogemise kursusel, ei sisalda tõsist sisu</p><p>See rida on lisatud kodus ja läbi Putty ja WinSCP üles laetud. :)</p><p>Olen kokku puutunud Javascripti, Typescripti ja Javaga ning teinud mõned proovitööd ka tööpakkumistega seoses.</p><p>Hobikorras tegelen klaveriõppega, samuti olen tegelenud laskespordiga ja motokrossiga.</p><hr></hr>';
-const pageFoot = '\n</body>\n<style></style></html>';
 
 
-//req = require, res = response
-http.createServer(function (req, res) {
+    else if (currentUrl.pathname === "/hobid") {
+      res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+      res.write(pageBanner.getHTML());
+      res.write(pageHead);
+      res.write(pageBody);
+      res.write("<p>Hetkel on peamiseks hobiks klaverimäng, natukene üle aasta õppinud.</p>");
+      res.write("<p>Siin on lühike klaveripala, mida vahepeal harjutasin:<p>");
+      res.write(practiseAudio.getHTML());
+      res.write("<p>Praegu kasutan sellist klaverit:</p>");
+      res.write(klaverImage.getHTML());
+      res.write(homeLink);
+      return res.end();
+    }
+    // alumine tükk lubab muusikal mängida
+    if (currentUrl.pathname === "/assets/tokio_final.mp3") {
+      return practiseAudio.serve(req, res);
 
-  // parsin URL-i
-  console.log("Päring: " + req.url);
-  let currentUrl = url.parse(req.url, true);
-  console.log("Parsituna: " + currentUrl.pathname);
 
-  if (currentUrl.pathname === "/") {
-    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
-    res.write(banner.getHTML());
-    res.write(pageHead);
-    res.write(pageBody);
-    res.write(pageLink);
-    res.write("<p>Täna on " + dateEt.weekDay() + ", " + dateEt.fullDate() + ", " + dateEt.partOfDay() + ".</p>");
-    res.write("<p>Kell on: " + dateEt.fullTime() + ".</p>");
+}
+
+  
+    
+    // res.writeHead(200, { "Content-type": "text/html" });
     res.write(pageFoot);
     return res.end();
-  }
-  else if (currentUrl.pathname === "/vanasonad") {
-    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
-    res.write(banner.getHTML());
-    res.write(pageHead);
-    res.write(pageBody);
-    res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
-    res.write(generateVanasonaForHTML());
-    return res.end();
-  }
-
-  // res.writeHead(200, { "Content-type": "text/html" });
-  res.write(pageFoot);
-  return res.end();
 
 
 
@@ -59,25 +89,25 @@ http.createServer(function (req, res) {
 
 
 
-}).listen(5135, () => {
-  console.log("Server running at http://localhost:5135/");
-});
+  }).listen(5135, () => {
+    console.log("Server running at http://localhost:5135/");
+  });
 
 
-//5135 on minu port, ka koduarvutile
-// \n - uus reavahe
-// \t - TAB, viskab edasi
+  //5135 on minu port, ka koduarvutile
+  // \n - uus reavahe
+  // \t - TAB, viskab edasi 
 
-// projekti kloonimiseks: git clone https://Shargathx@github.com/Shargathx/Project_1.git
-// git remote -v - näitab mis aadressid seotud on
-// git config user.name "name_here" - BAD METHOD; avoid
-// git config --global user.name "name_here" - alati minu nimi süsteemis olemas, ei pea eraldi iga kord uuesti tegema
-// git config user.name - gets my git name
-// git config user.email Shargathx@users.noreply.github.com - older method, AVOID
-// git config --global user.email Shargathx@users.noreply.github.com - better method
-// git config user.email - gets what my email is (Shargathx@users.noreply.github.com)
-// git status - näitab, kas/mis muutmata jne, mis seis on
-// git add . - addib KÕIK untrackimata failid
-// git add file_name - lisab ainult ühe valitud faili
-// git commit -m "Esimeste tundide tööde commit" - commitib koos kommentaariga
-// git push - küsib parooli, sinna github key / token
+  // projekti kloonimiseks: git clone https://Shargathx@github.com/Shargathx/Project_1.git
+  // git remote -v - näitab mis aadressid seotud on
+  // git config user.name "name_here" - BAD METHOD; avoid
+  // git config --global user.name "name_here" - alati minu nimi süsteemis olemas, ei pea eraldi iga kord uuesti tegema
+  // git config user.name - gets my git name
+  // git config user.email Shargathx@users.noreply.github.com - older method, AVOID
+  // git config --global user.email Shargathx@users.noreply.github.com - better method
+  // git config user.email - gets what my email is (Shargathx@users.noreply.github.com)
+  // git status - näitab, kas/mis muutmata jne, mis seis on
+  // git add . - addib KÕIK untrackimata failid
+  // git add file_name - lisab ainult ühe valitud faili
+  // git commit -m "Esimeste tundide tööde commit" - commitib koos kommentaariga
+  // git push - küsib parooli, sinna github key / token
