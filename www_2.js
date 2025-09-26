@@ -3,16 +3,18 @@ const PageBanner = require("./src/pageBanner");
 const { getSingleWisdomSaying } = require("./src/wisdomList");
 const { generateVanasonaForHTML } = require("./src/wisdomList");
 const dateEt = require("./src/dateTimeET");
-const banner = new PageBanner("vp_banner_2025_TA.jpg");
+const pageBanner = new PageBanner("vp_banner_2025_TA.jpg");
+const klaverPicture = new PageBanner("klaver.jpg");
 
 
 // laeme moodulid päringu parsimiseks
 const url = require("url");
 
-// faildie haldamiseks moodul:
+// failide haldamiseks moodul:
 const path = require("path");
 
 const pageLink = '\n\t<p>Vaata ka vanasõnade <a href="/vanasonad">lehte</a>!</p>';
+const hobiLink = '\n\t<p><a href="/hobid"> Siin on paar minu hobi</a></p>';
 
 // const wisdomList = require("./src/wisdomList");
 const pageHead = '<!DOCTYPE html>\n<html lang="et">\n<head>\n<meta charset="utf-8">\n<title> |Testleht| </title>\n</head>\n<body>';
@@ -30,7 +32,7 @@ http.createServer(function (req, res) {
 
   if (currentUrl.pathname === "/") {
     res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
-    res.write(banner.getHTML());
+    res.write(pageBanner.getHTML());
     res.write(pageHead);
     res.write(pageBody);
     res.write(pageLink);
@@ -41,13 +43,41 @@ http.createServer(function (req, res) {
   }
   else if (currentUrl.pathname === "/vanasonad") {
     res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
-    res.write(banner.getHTML());
+    res.write(pageBanner.getHTML());
     res.write(pageHead);
     res.write(pageBody);
     res.write("<p>Suvaline vanasõna on: " + getSingleWisdomSaying() + ".</p>");
     res.write(generateVanasonaForHTML());
     return res.end();
   }
+
+  else if (currentUrl.pathname === "/hobid"){
+    res.writeHead(200, { "Content-type": "text/html; charset=utf-8" });
+    res.write(pageBanner.getHTML());
+    res.write(pageHead);
+    res.write(pageBody);
+    res.write("Hetkel on peamiseks hobiks klaverimäng, natukene üle aasta õppinud. Kodus on selline klaver: " + klaverPicture.getHTML());
+    res.write(`<p>Siin on üks klaveripala:</p><audio controls><source src="/assets/klaver.mp3" type="audio/mpeg">Viga esitamisel või laadimisel.</audio>`);
+    res.write(hobiLink);
+    return res.end();
+  }
+
+  else if (currentUrl.pathname.startsWith("/assets/")) {
+  const filePath = path.join(__dirname, "src", currentUrl.pathname);
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      return res.end("File not found");
+    }
+
+    let contentType = "application/octet-stream";
+    if (filePath.endsWith(".mp3")) contentType = "audio/mpeg";
+
+    res.writeHead(200, { "Content-Type": contentType });
+    res.end(data);
+  });
+}
+
 
   // res.writeHead(200, { "Content-type": "text/html" });
   res.write(pageFoot);

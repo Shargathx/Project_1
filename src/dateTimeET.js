@@ -6,7 +6,7 @@ const monthNamesET = [
     "märts",
     "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"];
 const weekdayNamesEt = [
-    "pühapäev", 
+    "pühapäev",
     "esmaspäev",
     "teisipäev",
     "kolmapäev",
@@ -15,22 +15,22 @@ const weekdayNamesEt = [
     "laupäev"
 ];
 
-const dateNowFormattedET = function(){
-	let timeNow = new Date();
-	return timeNow.getDate() + ". " + monthNamesET[timeNow.getMonth()] + " " + timeNow.getFullYear();
+const dateNowFormattedET = function () {
+    let timeNow = new Date();
+    return timeNow.getDate() + ". " + monthNamesET[timeNow.getMonth()] + " " + timeNow.getFullYear();
 }
 
-const timeNowFormattedET = function(){
-	let timeNow = new Date();
-	return timeNow.getHours() + ":" + timeNow.getMinutes() + ":" + timeNow.getSeconds();
+const timeNowFormattedET = function () {
+    let timeNow = new Date();
+    return timeNow.getHours() + ":" + timeNow.getMinutes() + ":" + timeNow.getSeconds();
 }
 
-const weekDayNowET = function(){
-	let timeNow = new Date();
-	return weekdayNamesEt[timeNow.getDay()];
+const weekDayNowET = function () {
+    let timeNow = new Date();
+    return weekdayNamesEt[timeNow.getDay()];
 }
 
-const partOfDay = function() {
+const partOfDay = function () {
     const hour = new Date().getHours();
     let partOfDay = "Suvaline aeg";
 
@@ -45,9 +45,8 @@ const partOfDay = function() {
     } else if (hour >= 18 && hour <= 23) {
         partOfDay = "õhtupoolik";
     }
-
     return partOfDay;
 }
 
 //ekspordin kõik vajaliku
-module.exports = {fullDate: dateNowFormattedET, fullTime: timeNowFormattedET, weekDay: weekDayNowET, partOfDay: partOfDay};
+module.exports = { fullDate: dateNowFormattedET, fullTime: timeNowFormattedET, weekDay: weekDayNowET, partOfDay: partOfDay };
